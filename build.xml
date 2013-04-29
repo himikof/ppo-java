@@ -1,0 +1,53 @@
+<project name="java-ws" default="dist" basedir=".">
+    <description>
+    </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+
+  <!--<taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen">
+    <classpath path="${javac.classpath}"/>
+  </taskdef>-->
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}"/>
+    <manifest file="${build}/client.mf">
+        <attribute name="Main-Class" value="ru.ifmo.kt15.ofitserov.Client"/>
+    </manifest>
+    <manifest file="${build}/server.mf">
+        <attribute name="Main-Class" value="ru.ifmo.kt15.ofitserov.Server"/>
+    </manifest>
+    <!--<wsgen classpath="${build}" destdir="${build}"/>-->
+  </target>
+
+  <target name="dist" depends="compile"
+        description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+
+    <!-- Put everything in ${build} into a jar file -->
+    <jar jarfile="${dist}/lib/distcalc-client.jar" basedir="${build}"
+        manifest="${build}/client.mf"
+    />
+    <jar jarfile="${dist}/lib/distcalc-server.jar" basedir="${build}"
+        manifest="${build}/server.mf"
+    />
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
